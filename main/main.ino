@@ -3,16 +3,18 @@
 #include "uRTCLib.h"
 
 int relay = 13;
+int button = 7;
 uRTCLib rtc;
 
 
 unsigned int pos;
 
 void setup() {
-  delay (2000);
-  pinMode(relay, OUTPUT);
+//  delay (2000);
   Serial.begin(9600);
-  Serial.println("Serial OK");
+  pinMode(button, INPUT_PULLUP);
+  pinMode(relay, OUTPUT);  
+
 //  Max position: 32767
 
   for(pos = 0; pos < 1000; pos++) {
@@ -26,26 +28,32 @@ void setup() {
   pos = 0;
   
   #ifdef _VARIANT_ARDUINO_STM32_
-  Serial.println("Board: STM32");
+//  Serial.println("Board: STM32");
   #else
-  Serial.println("Board: Other");
+//  Serial.println("Board: Other");
   #endif
-  
+  // Serial.print(rtc.day() + '/' + rtc.month() + '/' + rtc.year() + ' ' + rtc.hour() + ':' + rtc.minute() + ':' + rtc.second() + ' ' + 'Iniciando o sistema!');
+  Serial.println("Iniciando o sistema!");
 }
 
 void loop() {
-  printRelogio();
-  delay(1000);
-  acionaRele();
+  if (digitalRead(button) == LOW) {
+    acionaRele();
+  }
+
+//  printRelogio();
+//  delay(1000);
+  
   
 }
 
 void acionaRele(){
   Serial.print("Acionando Relé para abertura da porta! \n");
   digitalWrite(relay, HIGH);
-  delay(100);   
+  delay(1000);   
   digitalWrite(relay, LOW);
 }
+
 
 void printRelogio(){
   rtc.refresh();
